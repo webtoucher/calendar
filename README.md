@@ -24,3 +24,49 @@ or add
 ```
 
 to the ```require``` section of your `composer.json` file.
+
+## Usage
+
+Create calendar for your country:
+
+```php
+$calendar = new Calendar(new Schedule('ru'));
+```
+
+Also you can use your external rules:
+
+```php
+$calendar = new Calendar(new Schedule('/var/www/my-site/rules/pl'));
+```
+
+Calculate number of working days with one of follow ways:
+
+```php
+echo $calendar->calendarToWorkingDays(new \DateTime('2016-02-24'), new \DateTime('2016-02-29')); // 3
+```
+
+```php
+echo $calendar->calendarToWorkingDays(new \DateTime('2016-02-29'), new \DateTime('2016-02-24')); // -3
+```
+
+```php
+echo $calendar->calendarToWorkingDays(new \DateTime('2016-02-24'), 5); // 3
+```
+
+```php
+echo $calendar->calendarToWorkingDays(new \DateTime('2016-02-29'), -5); // -3
+```
+
+Calculate number of calendar days by working days with one of follow ways:
+
+```php
+echo $calendar->workingToCalendarDays(new \DateTime('2016-02-24'), 3); // 5
+```
+
+```php
+echo $calendar->workingToCalendarDays(new \DateTime('2016-02-29'), -3); // -5
+```
+
+## Additional information
+
+You can help the project by adding rules for another countries. Send me your pull requests. But please use the same formating for json files.

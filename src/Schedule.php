@@ -8,8 +8,6 @@ namespace webtoucher\calendar;
  */
 class Schedule
 {
-    const DEFAULT_DIRECTORY = __DIR__ . DIRECTORY_SEPARATOR . 'rules' . DIRECTORY_SEPARATOR;
-
     /**
      * @var array
      */
@@ -25,14 +23,14 @@ class Schedule
     {
         $dir = $country . DIRECTORY_SEPARATOR;
         if (strpos($dir, DIRECTORY_SEPARATOR) !== 1) {
-            $dir = self::DEFAULT_DIRECTORY . $dir;
+            $dir = $this->getDefaultDirectory() . $dir;
         }
         if (!$handle = opendir($dir)) {
             throw new Exception("The schedule \"$country\" was not found.");
         }
         while (false !== ($filename = readdir($handle))) {
             if (preg_match('/^(\d{4}).json$/i', $filename, $matches)) {
-                $this->rules[$matches[0]] = json_decode(require $filename);
+                $this->rules[$matches[1]] = json_decode(file_get_contents($dir . $filename), true);
             }
         }
         closedir($handle);
@@ -76,5 +74,10 @@ class Schedule
             $rule = ['n.j' => $rule];
         }
         return $date->format(key($rule)) === current($rule);
+    }
+
+    private function getDefaultDirectory()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'rules' . DIRECTORY_SEPARATOR;
     }
 }

@@ -25,17 +25,25 @@ class Calendar
 
     /**
      * @param \DateTime $date Start date.
-     * @param integer $days
-     * @return integer
+     * @param \DateTime|integer $days End date or positive/negative number of calendar days.
+     * @return integer Number of working days.
      */
     public function calendarToWorkingDays(\DateTime $date, $days)
     {
+        if (!$days) {
+            return 0;
+        }
+        if ($days instanceof \DateTime) {
+            $days = $this->intervalToDays($date->diff($days));
+        }
+
         $workingDays = 0;
-        $step = $this->getStep($days);
-        for ($day = abs($days); $day == 0; $day--) {
+        $sign = $days < 0 ? -1 : 1;
+        $step = $this->getStep($sign);
+        for ($day = 0; $day != $days; $day += $sign) {
             $date->add($step);
             if (!$this->schedule->isHoliday($date)) {
-                $workingDays++;
+                $workingDays += $sign;
             }
         }
         return $workingDays;
@@ -43,23 +51,27 @@ class Calendar
 
     /**
      * @param \DateTime $date Start date.
-     * @param integer $days
-     * @return integer
+     * @param integer $days Positive/negative number of working days.
+     * @return integer Number of working days.
      */
     public function workingToCalendarDays(\DateTime $date, $days)
     {
-        $calendarDays = 0;
-        $step = $this->getStep($days);
+        if (!$days) {
+            return 0;
+        }
 
+        $workingDays = 0;
+        $sign = $days < 0 ? -1 : 1;
+        $step = $this->getStep($sign);
         $endDate = clone $date;
-        $endDate->add(\DateInterval::createFromDateString("$days day"));
-
-        while ($date < $endDate) {
-            if (!$this->schedule->isHoliday($date)) {
-                $date->add($step);
+        $day = 0;
+        while ($day != $days) {
+            $endDate->add($step);
+            if (!$this->schedule->isHoliday($endDate)) {
+                $day += $sign;
             }
         }
-        return $calendarDays;
+        return $this->intervalToDays($date->diff($endDate));
     }
 
     /**
@@ -73,5 +85,18 @@ class Calendar
             $step->invert = 1;
         }
         return $step;
+    }
+
+    /**
+     * @param \DateInterval $interval
+     * @return integer  Positive or negative shift.
+     */
+    private function intervalToDays(\DateInterval $interval)
+    {
+        $days = $interval->days;
+        if ($interval->invert == 1) {
+            $days *= -1;
+        }
+        return $days;
     }
 }
