@@ -22,7 +22,7 @@ class Schedule
     public function __construct($country)
     {
         $dir = $country . DIRECTORY_SEPARATOR;
-        if (strpos($dir, DIRECTORY_SEPARATOR) !== 1) {
+        if (strpos($dir, DIRECTORY_SEPARATOR) !== 0) {
             $dir = $this->getDefaultDirectory() . $dir;
         }
         if (!$handle = opendir($dir)) {
