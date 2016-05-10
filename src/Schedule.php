@@ -43,15 +43,12 @@ class Schedule
     public function isHoliday(\DateTime $date)
     {
         $year = $date->format('Y');
-        if (!array_key_exists($year, $this->rules)) {
-            return null;
-        }
         if (array_key_exists($year, $this->rules)) {
             return $this->checkRules($date, $year);
         } elseif (array_key_exists('default', $this->rules)) {
             return $this->checkRules($date, 'default');
         }
-        return false;
+        return null;
     }
 
     /**
