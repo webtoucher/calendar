@@ -33,7 +33,7 @@ Create calendar for your country:
 $calendar = new Calendar(new Schedule('ru'));
 ```
 
-Also you can use your external rules:
+Also you can use your external rules. Just create directory with your rules - e.x. 2016.json or default.json. Default rules will be used when rules for the year not exists. Use directory fullpath to init schedule.
 
 ```php
 $calendar = new Calendar(new Schedule('/var/www/my-site/rules/pl'));
