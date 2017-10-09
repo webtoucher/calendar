@@ -75,6 +75,21 @@ class Calendar
     }
 
     /**
+     * @param \DateTime $date Start or End date (see param $isEndDate).
+     * @param boolean $isEndDate Search direction: FALSE - from set date, TRUE - to set date.
+     * @return \DateTime Working day.
+     */
+    public function findClosestWorkingDay(\DateTime $date, $isEndDate = false)
+    {
+        $step = $this->getStep($isEndDate ? -1 : 1);
+        $foundDate = clone $date;
+        while ($this->schedule->isHoliday($foundDate)) {
+            $foundDate->add($step);
+        }
+        return $foundDate;
+    }
+
+    /**
      * @param integer $days Positive or negative shift.
      * @return \DateInterval
      */
